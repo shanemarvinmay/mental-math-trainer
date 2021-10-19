@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Math Trainer</title>
+</head>
+
+<body>
+    <div>
+        <button id="newQuestionButton">New Question!</button>
+        <br />
+        <select name="operator" id="operatorSelect">
+            <option value="+">Addition (+)</option>
+            <option value="-">Subtract (-)</option>
+            <option value="*">Multiply (*)</option>
+            <option value="/">Divide (/)</option>
+        </select>
+    </div>
+    <p id="firstNumberP"></p>
+    <br />
+    <span id="operatorP"></span>
+    <p id="secondNumberP"></p>
+    <hr />
+    <span> = </span><input id="answerInput" type="number" />
+    <br />
+    <button id="checkAnswerButton">Check!</button>
+    <br />
+    <p id="resultP"></p>
+
+    <script>
+        //  Getting elements
+        const newQuestionButton = document.querySelector(`#newQuestionButton`);
+        const operatorSelect = document.querySelector(`#operatorSelect`);
+        const firstNumberP = document.querySelector(`#firstNumberP`);
+        const operatorP = document.querySelector(`#operatorP`);
+        const secondNumberP = document.querySelector(`#secondNumberP`);
+        const answerInput = document.querySelector(`#answerInput`);
+        const checkAnswerButton = document.querySelector(`#checkAnswerButton`);
+        const resultP = document.querySelector(`#resultP`);
+        // Variables
+        let operator = '+';
+        let firstNumber = 0;
+        let secondNumber = 0;
+        let answer = 0;
+        let numberCorrect = 0;
+        // Helper functions
+        const getRandomInteger = (min = 0, max = 1) => {
+            return Math.floor(Math.random() * max) + min;
+        };
+        const setAnswer = (num1, num2, operator) => {
+            if (operator == '+') {
+                return num1 + num2;
+            } else if (operator == '-') {
+                return num1 - num2;
+            } else if (operator == '*') {
+                return num1 * num2;
+            }
+
+            return num1 / num2;
+        }
+        const grade = (guess) => {
+            if (answer == guess) {
+                numberCorrect += 1;
+                resultP.innerText = `Correct! You've gotten ${numberCorrect} correct`;
+            } else {
+                resultP.innerText = `Wrong! Try again.`;
+            }
+        };
+        // Setting onChange listener functions
+        newQuestionButton.onclick = () => {
+            console.log(`newQuestionButton.onchange`);
+            // Making sure any old results have disappeared
+            resultP.innerText = ``;
+            // Erasing any old answers.
+            answerInput.value = ``;
+            // Setting numbers 
+            firstNumber = getRandomInteger(secondNumber, 20);
+            secondNumber = getRandomInteger(1, 20);
+            while (operator == '-') {
+                if (firstNumber < secondNumber) {
+                    firstNumber = getRandomInteger(secondNumber, 10);
+                    secondNumber = getRandomInteger(1, 10);
+                } else {
+                    break;
+                }
+            }
+
+            while (operator == '/') {
+                if (firstNumber % secondNumber != 0 || firstNumber < secondNumber) {
+                    firstNumber = getRandomInteger(5, 10);
+                    secondNumber = getRandomInteger(1, 5);
+                } else {
+                    break;
+                }
+            }
+            console.log(`newQuestionButton.onchange firstNumber:${firstNumber} secondNumber:${secondNumber}`);
+            firstNumberP.innerText = firstNumber;
+            secondNumberP.innerText = secondNumber;
+            // Setting Operator
+            operatorP.innerText = operator;
+            // Set answer
+            answer = setAnswer(firstNumber, secondNumber, operator);
+        };
+        operatorSelect.onchange = () => {
+            // console.log(`operatorSelect operator:${operator} operatorSelect${operatorSelect.value}`);
+            operator = operatorSelect.value;
+        };
+        answerInput.onkeyup = (event) => {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                console.log(`answerInput.onkeyup enter pressed, check answer.`);
+                grade(Number(answerInput.value));
+            }
+            // console.log(`operatorSelect operator:${operator} operatorSelect${operatorSelect.value}`);
+        };
+        checkAnswerButton.onclick = () => {
+            grade(Number(answerInput.value));
+        };
+    </script>
+</body>
+
+</html>
